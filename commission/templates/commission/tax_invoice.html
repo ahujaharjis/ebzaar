@@ -1,0 +1,198 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <style type="text/css">
+        @page {
+            size: a4 portrait;
+
+             @frame content_frame {
+            left: 50pt;
+            width: 512pt;
+            top: 50pt;
+            right:50pt;
+            height: 692pt;
+            bottom:50pt;
+           /*-pdf-frame-border: 0;    /* for debugging the layout */
+        }
+
+        }
+
+    </style>
+<style>
+    table{
+        font-size: 18px;
+    }
+    tr{
+        height: 35px;
+    }
+    td,th{
+ text-align:center;
+ vertical-align:middle;
+}
+    .top {
+  border-top: thick solid;
+  border-color: black;
+}
+
+.bottom {
+  border-bottom: thick solid;
+  border-color: black;
+}
+
+.left {
+  border-left: thick solid;
+  border-color: black;
+}
+
+.right {
+  border-right: thick solid;
+  border-color: black;
+}
+</style>
+</head>
+<body>
+<br>
+
+<table cellpadding="3" text-align="center">
+    <col width="240">
+  <col width="120">
+    <col width="120">
+    <col width="120">
+    <tr>
+        <th colspan="4" width="240" text-align="center" class="left right top bottom">TAX INVOICE</th>
+    </tr>
+     <tr>
+        <th colspan="4" text-align="center" class="top left right">YAMINI INDIA PVT LTD</th>
+    </tr>
+    <tr>
+        <th colspan="4" text-align="center" class="left right">UNIT NO-3 ,8th FLOOR SP-TBI,</th>
+    </tr>
+    <tr>
+        <th colspan="4" text-align="center" class="left right">SPIT COLLEGE,BHAVAN COLLEGE CAMPUS, ANDHERI (W)-400058</th>
+    </tr>
+    <tr>
+        <th colspan="4" text-align="center" class="left right bottom">GSTIN No 27AAACY6852D1Z8</th>
+    </tr>
+    <tr>
+        <td class="left top right" width="240">Bill To</td>
+        <td class="left top right">Place of Supply</td>
+        <td class="left right top bottom" rowspan="2">Invoice No.</td>
+        <td class="left right top bottom" rowspan="2">Date</td>
+    </tr>
+    <tr>
+        <td class="left right" width="240">{{ name }}</td>
+        <td class="left right">{{ name }}</td>
+
+     <tr>
+        <td class="left right" width="240">{{ place }}</td>
+        <td class="left right">{{ place }}</td>
+        <td class="left rigth top bottom" rowspan="2"></td>
+        <td class="left right top bottom" rowspan="2">{{ date }}</td>
+    </tr>
+     <tr>
+        <td class="left right bottom" width="240">GST TIN No:{{ gsttinno }}</td>
+        <td></td>
+
+    </tr>
+     <tr>
+        <td class="left right top bottom" width="240">Description of Services</td>
+        <td class="left right top bottom"></td>
+        <td class="top bottom right left">SAC Code</td>
+        <td class="top bottom left right">Amount</td>
+    </tr>
+    <tr>
+        <td class="left right" width="240"></td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+    </tr>
+     <tr>
+        <td class="left right" width="240">Commission for {{ dmin }} to {{ dmax }}</td>
+        <td class="left right"></td>
+        <td class="left right">996211</td>
+        <td class="left right">{{ amt_sum }}</td>
+    </tr>
+     <tr>
+        <td class="left right" width="240"></td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+    </tr>
+    <tr>
+        <td class="left right" width="240">Taxable Value</td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+        <td class="left right">{{ amtpay_sum }}</td>
+    </tr>
+    <tr>
+        <td class="left right" width="240">CGST- 9%</td>
+        <td class="left right">{{ tax }}</td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+    </tr>
+    <tr>
+        <td class="left right" width="240">SGST- 9%</td>
+        <td class="left right">{{ tax }}</td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+    </tr>
+    <tr>
+        <td class="left right" width="240">Total GST- 18%</td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+        <td class="left right">{{ total_tax }}</td>
+    </tr>
+     <tr>
+        <td class="left right" width="240"></td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+    </tr>
+     <tr>
+        <td class="left right" width="240"></td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+        <td class="left right"></td>
+    </tr>
+    <tr>
+        <td class="left right top bottom" width="240">Total</td>
+        <td class="left right top bottom"></td>
+        <td class="left right top bottom"></td>
+        <td class="left right top bottom">{{ total }}</td>
+    </tr>
+    <tr>
+        <td class="left right top" width="240">Amount Chargable in Words</td>
+        <td class="left right top"></td>
+        <td class="left top"></td>
+        <td class="right top"></td>
+    </tr>
+    <tr>
+        <td class="left right" width="240">{{ word|capfirst  }}</td>
+        <td class="left right"></td>
+        <td colspan="2" class="left right">For Yamini India Pvt Ltd</td>
+
+    </tr>
+    <tr>
+        <td class="left right" width="240">Company's PAN: AAACY6852D</td>
+        <td class="left right"></td>
+        <td class="left right" colspan="2">Authorised Signatory</td>
+
+    </tr>
+     <tr>
+        <td class="left right bottom" width="240">Note-Please make cheques in favor of "Yamini India Pvt Ltd"</td>
+        <td></td>
+        <td class="bottom left right" colspan="2"><img src="../sign.png"/></td>
+
+
+    <tr>
+        <td class="top left bottom" width="240"></td>
+        <td class="top bottom"></td>
+        <td class="top bottom"></td>
+        <td class="top right bottom"></td>
+
+    </tr>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<head>
+
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+}
+</style>
+</head>
+<body>
+<br>
+
+
+
+<script>
+$(document).ready(function(){
+  $('.dropdown-submenu a.test').on("click", function(e){
+    $(this).next('ul').toggle();
+    e.stopPropagation();
+    e.preventDefault();
+  });
+});
+</script>
+
+<br>
+
+<h1>Stores</h1>
+{% for store in stores %}
+    <a href="{% url 'commission:store_detail' name=store %}">{{ store }}</a>
+    <br>
+{% endfor %}
+</body>
+
+<a href="{% url 'commission:comm_calc' %}"><h1> Calculate Commission</h1></a>

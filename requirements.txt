@@ -1,0 +1,7 @@
+num2words
+xhtml2pdf
+xlutils
+xlrd
+Django==2.0.1
+whitenoise=3.3.1
+

@@ -1,0 +1,128 @@
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js" type="text/javascript"></script>
+
+<script type='text/javascript'>
+    var availableColleges = [
+      {% for store in stores %}
+          "{{store}}",
+      {%endfor%}
+    ];
+
+    function cloneMore(selector, type) {
+    var newElement = $(selector).clone(true);
+    var total = $('#id_' + type + '-TOTAL_FORMS').val();
+
+    newElement.find(':input').each(function() {
+        var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
+        var id = 'id_' + name;
+
+        $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+        console.log("here")
+        $('#'+id).autocomplete({
+            source: '../ajax_calls/myFunction',
+            minLength: 1,
+            response: function (event, ui) {
+                // ui.content is the array that's about to be sent to the response callback.
+                if (ui.content.length === 0) {
+                    $("#empty-message").text("No results found");
+                } else {
+                    $("#empty-message").empty();
+                }
+            }
+        });
+    });
+    newElement.find('label').each(function() {
+        var newFor = $(this).attr('for').replace('-' + (total-1) + '-','-' + total + '-');
+        $(this).attr('for', newFor);
+    });
+    total++;
+
+    $('#id_' + type + '-TOTAL_FORMS').val(total);
+    $(selector).after(newElement);
+
+}
+
+</script>
+
+<h1>{{ name }}</h1>
+
+<form action="" method="POST">
+{% csrf_token %}
+{{ formset.management_form }}
+{{ formset.non_form_errors.as_ul }}
+<table id="formset" class="form">
+{% for form in formset.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr class="{% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+<input type="button" value="Add" id="add_more"/>
+<input type="submit" value="Submit" id="submit"/>
+</form>
+<script>
+    $('#add_more').click(function() {
+        cloneMore('tr.row1:last', 'form');
+
+    });
+    $("select[id$='type']").change(function() {
+    if ($(this).val()== 'FLAT PER ORDER') {
+        id = $(this).attr('id').replace('type', 'sku');
+        console.log(id);
+        $("#"+id).attr('disabled', true);
+        id = $(this).attr('id').replace('type','categories');
+        $("#"+id).attr('disabled',true);
+    }
+    else if($(this).val() == 'FLAT PER SKU'){
+        id = $(this).attr('id').replace('type', 'categories')
+        $("#"+id).attr('disabled',true);
+        id = $(this).attr('id').replace('type', 'sku')
+        $("#"+id).attr('disabled',false);
+    }
+    else if($(this).val()== 'RATE PER CATEGORY'){
+        id = $(this).attr('id').replace('type', 'sku')
+        $("#"+id).attr('disabled',true);
+        id = $(this).attr('id').replace('type', 'categories')
+        $("#"+id).attr('disabled',false);
+    }
+    else{
+        id = $(this).attr('id').replace('type', 'categories')
+        $("#"+id).attr('disabled',true);
+        id = $(this).attr('id').replace('type', 'sku')
+        $("#"+id).attr('disabled',true);
+    }
+}).change();
+
+    $(document).on("focus","input[id$='store']", function() {
+        console.log(this.id)
+        $(this).autocomplete({
+            source:'../ajax_calls/myFunction',
+            minLength:1,
+        })
+
+    });
+
+</script>

@@ -1,0 +1,577 @@
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js" type="text/javascript"></script>
+
+<script type='text/javascript'>
+
+    function cloneMore(selector, type) {
+    var newElement = $(selector).clone(true);
+    var total = $('#id_' + type + '-TOTAL_FORMS').val();
+
+    newElement.find(':input').each(function() {
+        var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
+        var id = 'id_' + name;
+
+        $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+        console.log("here")
+        $('#'+id).autocomplete({
+            source: '../ajax_calls/myFunction',
+            minLength: 1,
+            response: function (event, ui) {
+                // ui.content is the array that's about to be sent to the response callback.
+                if (ui.content.length === 0) {
+                    $("#empty-message").text("No results found");
+                } else {
+                    $("#empty-message").empty();
+                }
+            }
+        });
+    });
+    newElement.find('label').each(function() {
+        var newFor = $(this).attr('for').replace('-' + (total-1) + '-','-' + total + '-');
+        $(this).attr('for', newFor);
+    });
+    total++;
+
+    $('#id_' + type + '-TOTAL_FORMS').val(total);
+    $(selector).after(newElement);
+
+}
+
+</script>
+<br>
+<h1>{{ name }}<span style="float: right"><a href="{% url 'commission:home_commission' %}" style="color: black">HOME PAGE </a></span></h1>
+<br>
+<div class="container" style="border: 2px solid #000000;">
+    <h3>GST NO : {{ gstno }}</h3>
+<form action="{% url 'commission:gstno_change' name=name %}" method="POST">
+    {% csrf_token %}
+    GST No:<input type="tex" name="gstno"/>
+    <br>
+    <input type="submit" value="Submit" name="Submit">
+</form>
+</div>
+<br>
+<div class="container" style="border: 2px solid #000000;">
+<h1>Base Details</h1>
+<table cellspacing="5px" cellpadding="5px">
+    <tr>
+        <th>Rate</th>
+        <th>Date From</th>
+        <th>Date To</th>
+        <th>PG PASS</th>
+        <th>Tax</th>
+    </tr>
+    {% for b in base %}
+        <tr>
+        <td>{{ b.rate }}</td>
+        <td>{{ b.date_from }}</td>
+        <td>{{ b.date_to }}</td>
+        <td>{{ b.payment_gateway_pass }}</td>
+        <td>{{ b.tax_inclusive }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<form action="{% url 'commission:default_rate' name=name %}" method="POST">
+{% csrf_token %}
+<input type="hidden" name="store_name" value="name"/>
+{{ formset1.management_form }}
+{{ formset1.non_form_errors.as_ul }}
+<table id="formset" class="form">
+{% for form in formset1.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr id="1" class=" t1 {% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+
+<input type="button" value="Add" id="add_more1"/>
+<input type="submit" value="Submit" id="submit"/>
+</form>
+</div>
+<br>
+<div class="container" style="border: 2px solid #000000;">
+
+<h1>Cancelled Orders</h1>
+<table cellspacing="5px" cellpadding="5px">
+    <tr>
+        <th>Order Id</th>
+        <th>Reason</th>
+        <th>Price</th>
+    </tr>
+    {% for b in penalty_reason %}
+        <tr>
+        <td>{{ b.order_id }}</td>
+        <td>{{ b.reason }}</td>
+        <td>{{ b.price }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<form action="{% url 'commission:penalty_reason_list' name=name %}" method="POST">
+{% csrf_token %}
+<input type="hidden" name="store_name" value="name"/>
+{{ formset8.management_form }}
+{{ formset8.non_form_errors.as_ul }}
+<table id="formset8" class="form">
+{% for form in formset8.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr id="1" class=" t1 {% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+
+
+<input type="submit" value="Submit" id="submit"/>
+</form>
+<br>
+<h1>Penalty Rates</h1>
+<table cellspacing="5px" cellpadding="5px">
+    <tr>
+        <th>Price</th>
+        <th>Orders</th>
+        <th>Date From</th>
+        <th>Date To</th>
+
+    </tr>
+    {% for b in penalty %}
+        <tr>
+        <td>{{ b.price }}</td>
+            <td>{{ b.orders }}</td>
+        <td>{{ b.date_from }}</td>
+        <td>{{ b.date_to }}</td>
+
+        </tr>
+    {% endfor %}
+</table>
+<form action="{% url 'commission:penalty_list' name=name %}" method="POST">
+{% csrf_token %}
+<input type="hidden" name="store_name" value="name"/>
+{{ formset4.management_form }}
+{{ formset4.non_form_errors.as_ul }}
+<table id="formset" class="form">
+{% for form in formset4.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr class=" t4 {% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+
+<input type="button" value="Add" id="add_more4"/>
+<input type="submit" value="Submit" id="submit"/>
+</form>
+</div>
+<br>
+<div class="container" style="border: 2px solid #000000;overflow:auto;">
+<h1>Concessional Rates</h1>
+<table cellspacing="5px" cellpadding="5px">
+    <tr>
+        <th>Type</th>
+        <th>SKU</th>
+        <th>Category</th>
+        <th>Rate</th>
+        <th>Date From</th>
+        <th>Date To</th>
+
+    </tr>
+    {% for b in conc %}
+        <tr>
+        <td>{{ b.type }}</td>
+        <td>{{ b.sku }}</td>
+        <td>{{ b.category }}</td>
+        <td>{{ b.rate }}</td>
+        <td>{{ b.date_from }}</td>
+        <td>{{ b.date_to }}</td>
+
+        </tr>
+    {% endfor %}
+</table>
+<form action="{% url 'commission:concessional_rate' name=name %}" method="POST">
+{% csrf_token %}
+<input type="hidden" name="store_name" value="name"/>
+{{ formset2.management_form }}
+{{ formset2.non_form_errors.as_ul }}
+<table id="formset" class="form">
+{% for form in formset2.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr class=" t2 {% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+
+<input type="button" value="Add" id="add_more2"/>
+<input type="submit" value="Submit" id="submit"/>
+</form>
+</div>
+<br>
+<div class="container" style="border: 2px solid #000000;">
+<h1>Promotional Rates</h1>
+<table cellspacing="5px" cellpadding="5px">
+    <tr>
+
+        <th>SKU</th>
+        <th>Rate</th>
+        <th>Date From</th>
+        <th>Date To</th>
+
+    </tr>
+    {% for b in promo %}
+        <tr>
+
+        <td>{{ b.sku }}</td>
+        <td>{{ b.rate }}</td>
+        <td>{{ b.date_from }}</td>
+        <td>{{ b.date_to }}</td>
+
+        </tr>
+    {% endfor %}
+</table>
+
+<form action="{% url 'commission:promo_rate' name=name %}" method="POST">
+{% csrf_token %}
+<input type="hidden" name="store_name" value="name"/>
+{{ formset6.management_form }}
+{{ formset6.non_form_errors.as_ul }}
+<table id="formset" class="form">
+{% for form in formset6.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr class=" t6 {% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+
+<input type="button" value="Add" id="add_more6"/>
+<input type="submit" value="Submit" id="submit"/>
+</form>
+
+</div>
+<br>
+<div class="container" style="border: 2px solid #000000;">
+<h1>Delivery Zones</h1>
+<table cellspacing="5px" cellpadding="5px">
+    <tr>
+
+        <th>Pincode</th>
+        <th>Delivered By</th>
+        <th>Date From</th>
+        <th>Date To</th>
+
+    </tr>
+    {% for b in deliveryzone %}
+        <tr>
+
+        <td>{{ b.pincodes }}</td>
+        <td>{{ b.delivered_by }}</td>
+        <td>{{ b.date_from }}</td>
+        <td>{{ b.date_to }}</td>
+
+        </tr>
+    {% endfor %}
+</table>
+
+<form action="{% url 'commission:delivery_zone' name=name %}" method="POST">
+{% csrf_token %}
+<input type="hidden" name="store_name" value="name"/>
+{{ formset7.management_form }}
+{{ formset7.non_form_errors.as_ul }}
+<table id="formset" class="form">
+{% for form in formset7.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr class=" t7 {% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+
+<input type="button" value="Add" id="add_more7"/>
+<input type="submit" value="Submit" id="submit"/>
+</form>
+
+<br>
+<h1>Delivery Rates</h1>
+<table cellspacing="5px" cellpadding="5px">
+    <tr>
+        <th>Rate</th>
+        <th>Date From</th>
+        <th>Date To</th>
+        <th>PG PASS</th>
+        <th>Tax</th>
+    </tr>
+    {% for b in addcomm %}
+        <tr>
+        <td>{{ b.rate }}</td>
+        <td>{{ b.date_from }}</td>
+        <td>{{ b.date_to }}</td>
+        <td>{{ b.payment_gateway_pass }}</td>
+        <td>{{ b.tax_inclusive }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<form action="{% url 'commission:addcommrate' name=name %}" method="POST">
+{% csrf_token %}
+<input type="hidden" name="store_name" value="name"/>
+{{ formset3.management_form }}
+{{ formset3.non_form_errors.as_ul }}
+<table id="formset" class="form">
+{% for form in formset3.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr class="t3 {% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+
+<input type="button" value="Add" id="add_more3"/>
+<input type="submit" value="Submit" id="submit"/>
+</form>
+</div>
+<br>
+<div class="container" style="border: 2px solid #000000;">
+<h1>Reimbursements</h1>
+<table cellspacing="5px" cellpadding="5px">
+    <tr>
+        <th>Thre Amt</th>
+        <th>Amt</th>
+        <th>Date From</th>
+        <th>Date To</th>
+
+    </tr>
+    {% for b in reimbursement %}
+        <tr>
+        <td>{{ b.thres_amt }}</td>
+        <td>{{ b.amt }}</td>
+        <td>{{ b.date_from }}</td>
+        <td>{{ b.date_to }}</td>
+
+        </tr>
+    {% endfor %}
+</table>
+<form action="{% url 'commission:reimbursement' name=name %}" method="POST">
+{% csrf_token %}
+<input type="hidden" name="store_name" value="name"/>
+{{ formset5.management_form }}
+{{ formset5.non_form_errors.as_ul }}
+<table id="formset" class="form">
+{% for form in formset5.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+    <tbody class="end">
+
+  <tr class=" t5 {% cycle "row1" "row2" %} ">
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {{ field.errors.as_ul }}
+      {{ field }}
+    </td>
+  {% endfor %}
+  </tr>
+    </tbody>
+{% endfor %}
+</table>
+
+<input type="button" value="Add" id="add_more5"/>
+<input type="submit" value="Submit" id="submit"/>
+</form>
+</div>
+<script>
+    $("input[id^='add_more']").click(function() {
+        id = $(this).attr('id').replace('add_more','');
+
+        cloneMore('tr.t'+id+':last', 'form');
+    });
+
+
+    $("select[id$='type']").change(function() {
+    if ($(this).val()== 'FLAT PER ORDER') {
+        id = $(this).attr('id').replace('type', 'sku');
+        console.log(id);
+        $("#"+id).attr('disabled', true);
+        id = $(this).attr('id').replace('type','categories');
+        $("#"+id).attr('disabled',true);
+    }
+    else if($(this).val() == 'FLAT PER SKU'){
+        id = $(this).attr('id').replace('type', 'categories')
+        $("#"+id).attr('disabled',true);
+        id = $(this).attr('id').replace('type', 'sku')
+        $("#"+id).attr('disabled',false);
+    }
+    else if($(this).val()== 'RATE PER CATEGORY'){
+        id = $(this).attr('id').replace('type', 'sku')
+        $("#"+id).attr('disabled',true);
+        id = $(this).attr('id').replace('type', 'categories')
+        $("#"+id).attr('disabled',false);
+    }
+    else{
+        id = $(this).attr('id').replace('type', 'categories')
+        $("#"+id).attr('disabled',true);
+        id = $(this).attr('id').replace('type', 'sku')
+        $("#"+id).attr('disabled',true);
+    }
+}).change();
+
+    $(document).on("focus","input[id$='store']", function() {
+        console.log(this.id)
+        $(this).autocomplete({
+            source:'../ajax_calls/myFunction',
+            minLength:1,
+        })
+
+    });
+
+</script>

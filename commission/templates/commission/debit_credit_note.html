@@ -1,0 +1,356 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <style type="text/css">
+        @page {
+            size: a4 portrait;
+
+             @frame content_frame {
+            left: 50pt;
+            width: 512pt;
+            top: 50pt;
+            right:50pt;
+            height: 692pt;
+            bottom:50pt;
+            -pdf-frame-border: 1; /* for debugging the layout */
+        }
+
+        }
+
+         .content {
+    border: 1px solid black;
+    text-align: center;
+    table-layout: fixed;
+    width: 100%;
+            font-size: 12px;
+}
+.text{
+    font-size: 12px;
+}
+    </style>
+</head>
+<body>
+
+
+<div><img src="../logo1.png" width="100" height="50"/></div>
+    <div style="text-align: right"><img src="../logo2.png" width="100" height="50"/></div>
+<br>
+    <table border="0" class="text" cellpadding="2" cellspacing="0">
+        <col width="960">
+  <col width="120">
+        <tr>
+            <td width="960">Yamini India Pvt. Ltd.</td>
+            <td>Credit Note No: CN1718/SS14</td>
+        </tr>
+        <tr>
+            <td width="960">SP-TBI, 8th Floor, Sardar Patel Institue of Technology</td>
+            <td>Date:{{ date }}</td>
+        </tr>
+        <tr>
+            <td width="960">Bhavans Campus, Andheri West</td>
+            <td>Vendor Reference No:</td>
+        </tr>
+        <tr>
+            <td>Mumbai 400058</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Phone: +91 9833 99 6502</td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td>www.ebzaar.com</td>
+            <td></td>
+        </tr>
+         <tr>
+            <td>GST NO: 27AAACY6852D1Z8</td>
+            <td></td>
+        </tr>
+         <tr>
+            <td>To Account of:</td>
+            <td></td>
+        </tr>
+         <tr>
+            <td>M/S {{ name }}</td>
+            <td></td>
+        </tr>
+         <tr>
+            <td>K/A: Jenish Bhai</td>
+            <td></td>
+        </tr>
+         <tr>
+            <td>Dear Sir/Madam,</td>
+            <td></td>
+        </tr>
+
+    </table>
+
+
+{% if commission_total > 0 %}
+    <h3 style="text-align:center;">We are Debiting your A/C for Rs.{{ commission_total }} against detail under mentioned.</h3>
+<table class="content" cellpadding="3">
+    <tr>
+        <th>Sr No.</th>
+        <th width="240">Particulars</th>
+        <th>Net Debit</th>
+        <th>Amount Rs</th>
+    </tr>
+    <tr>
+        <td></td>
+        <td width="240">Settlement period</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>{{ dmin }} to {{ dmax }}</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Commission for Order No.s
+        {% for order in orders %}
+            {{ order }}
+        {% endfor %}
+        </td>
+        <td></td>
+        <td>{{ amt_sum }}</td>
+    </tr>
+{% if netpay_sum %}
+    <tr>
+        <td></td>
+        <td>Tax Collected for Source for {{ dmin }} to {{ dmax }} as per GST norms at 1% of all online/NEFT/PayTM payment.
+        </td>
+        <td></td>
+        <td>{{ netpay_sum }}</td>
+    </tr>
+{% endif %}
+
+    <tr>
+        <td></td>
+        <td>C/S-GST @18% On Commission
+        </td>
+        <td></td>
+        {% if tax %}<td>{{ tax }}</td>
+        {% else %}
+            <td>0.0</td>
+        {% endif %}
+    </tr>
+
+{% if reimbursement %}
+    <tr>
+        <td>Less</td>
+        <td>Reimbursement towards Ebzaar</td>
+        <td></td>
+        <td>-{{ reimbursement }}</td>
+    </tr>
+{% endif %}
+{% if promos_orders %}
+    <tr>
+        <td></td>
+        <td>Promotional Orders</td>
+        <td></td>
+        <td>{{ promos_orders }}</td>
+    </tr>
+{% endif %}
+{% if conc_order %}
+    <tr>
+        <td></td>
+        <td>Concessional Orders</td>
+        <td></td>
+        <td>{{ conc_order }}</td>
+    </tr>
+{% endif %}
+{% if csku_order %}
+    <tr>
+        <td></td>
+        <td>Concessional Skus</td>
+        <td></td>
+        <td>{{ csku_order }}</td>
+    </tr>
+{% endif %}
+{% if d_order %}
+    <tr>
+        <td></td>
+        <td>Additional Commission where delivery is provided by Ebzaar</td>
+        <td></td>
+        <td>{{ d_order }}</td>
+    </tr>
+{% endif %}
+{% if cat_order %}
+    <tr>
+        <td></td>
+        <td>Concessional rates for Category</td>
+        <td></td>
+        <td>{{ cat_order }}</td>
+    </tr>
+{% endif %}
+{% if penalty_cancelled %}
+    <tr>
+        <td></td>
+        <td>Penalty for Cancelled Orders</td>
+        <td></td>
+        <td>{{ penalty_cancelled }}</td>
+    </tr>
+{% endif %}
+    <tr>
+        <td></td>
+        <td>Total Value</td>
+        <td>{{ commission_total }}</td>
+        <td>{{ commission_total }}</td>
+    </tr>
+ <tr>
+        <td></td>
+        <td>Total payment to be made</td>
+        <td></td>
+        <td>{{ commission_total }}</td>
+    </tr>
+
+<tr>
+        <td>Value in Words</td>
+        <td></td>
+        <td>{{ word|capfirst  }}</td>
+        <td></td>
+    </tr>
+</table>
+<table class="text" cellspacing="0"cellpadding="2">
+    <tr><td>You are requested to pay the above amount to our account within 3 working days from above date</td><td></td></tr>
+    <tr><td>NEFT/RTGS Detail:</td><td></td></tr>
+    <tr><td>A/C Name: Yamini India Pvt. Ltd.</td><td></td></tr>
+    <tr><td>Bank: SBI</td><td></td></tr>
+    <tr><td width="960" style="border-left: solid;border-right: solid;border-top: solid;">A/C No.:34008145185</td><td>For Yamini India Pvt. Ltd.</td></tr>
+    <tr><td>IFSC Code:SBIN0060278</td></tr>
+    <tr><td width="960" style="border-left: solid;border-right: solid;border-bottom: solid;">Branch:Chakala Road, Andheri (E), Mumbai</td><td>Authorised Signatory</td></tr>
+</table>
+{% else %}
+    <h3 style="text-align:center;">We are Crediting your A/C for Rs.2107/- against detail under mentioned.</h3>
+    <table cellpadding="3">
+    <tr>
+        <th>Sr No.</th>
+        <th>Particulars</th>
+        <th>Net Debit</th>
+        <th>Amount Rs</th>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Settlement period</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>{{ dmin }} to {{ dmax }}</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Less</td>
+        <td>Commission for Order No.s
+        {% for order in orders %}
+            {{ order }}
+        {% endfor %}
+        </td>
+        <td></td>
+        <td>{{ amt_sum }}</td>
+    </tr>
+{% if netpay_sum %}
+    <tr>
+        <td>Less</td>
+        <td>Tax Collected for Source for {{ dmin }} to {{ dmax }} as per GST norms at 1% of all online/NEFT/PayTM payment.
+        </td>
+        <td></td>
+        <td>{{ netpay_sum }}</td>
+    </tr>
+{% endif %}
+        {% if tax %}
+    <tr>
+        <td>Less</td>
+        <td>C/S-GST @18% On Commission
+        </td>
+        <td></td>
+        <td>{{ tax }}</td>
+    </tr>
+        {% endif %}
+{% if reimbursement %}
+    <tr>
+        <td></td>
+        <td>Reimbursement towards Ebzaar</td>
+        <td></td>
+        <td>-{{ reimbursement }}</td>
+    </tr>
+{% endif %}
+{% if promos_orders %}
+    <tr>
+        <td>Less</td>
+        <td>Promotional Orders</td>
+        <td></td>
+        <td>{{ promos_orders }}</td>
+    </tr>
+{% endif %}
+{% if conc_order %}
+    <tr>
+        <td>Less</td>
+        <td>Concessional Orders</td>
+        <td></td>
+        <td>{{ conc_order }}</td>
+    </tr>
+{% endif %}
+{% if csku_order %}
+    <tr>
+        <td>Less</td>
+        <td>Concessional Skus</td>
+        <td></td>
+        <td>{{ csku_order }}</td>
+    </tr>
+{% endif %}
+{% if d_order %}
+    <tr>
+        <td>Less</td>
+        <td>Additional Commission where delivery is provided by Ebzaar</td>
+        <td></td>
+        <td>{{ d_order }}</td>
+    </tr>
+{% endif %}
+{% if cat_order %}
+    <tr>
+        <td>Less</td>
+        <td>Concessional rates for Category</td>
+        <td></td>
+        <td>{{ cat_order }}</td>
+    </tr>
+{% endif %}
+{% if penalty_cancelled %}
+    <tr>
+        <td>Less</td>
+        <td>Penalty for Cancelled Orders</td>
+        <td></td>
+        <td>{{ penalty_cancelled }}</td>
+    </tr>
+{% endif %}
+    <tr>
+        <td></td>
+        <td>Total Value</td>
+        <td>{{ commission_total }}</td>
+        <td>{{ commission_total }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Total payment to be collected</td>
+        <td></td>
+        <td>{{ commission_total }}</td>
+    </tr>
+
+<tr>
+        <td>Value in Words</td>
+        <td></td>
+        <td>{{ word|capfirst }}</td>
+        <td></td>
+    </tr>
+</table>
+    <h3 style="text-align:center;">We are Crediting your A/C for Rs.{{ commission_total }} against detail under mentioned.</h3>
+{% endif %}
+
+</body>
+</html>

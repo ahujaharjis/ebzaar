@@ -1,0 +1,54 @@
+<style>
+    .content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+    .buttonstyle
+{
+background-color: white;
+font-weight: bold;
+text-align: center;
+vertical-align: middle;
+color: black;
+
+    }
+
+</style>
+<div class="content">
+    WELCOME
+<br>
+
+    {% if epids %}
+            <font color="red">Duplicate Product Ids Errors</font><br>
+        {% for pid in epids %}
+            {{ pid }}<br>
+        {% endfor %}
+        {% endif %}
+
+        {% if eskus %}
+            <font color="red">Duplicate Sku's Errors</font><br>
+            {% for sku in eskus %}
+                {{ sku }}<br>
+            {% endfor %}
+        {% endif %}
+        {% if esmrps %}
+            <font color="red">No price at Vendor's File</font><br>
+            {% for mrp in esmrps %}
+                {{ mrp }}<br>
+            {% endfor %}
+        {% endif %}
+
+Upload files
+<br>
+<form action="{% url 'mapping:results' %}" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <table border="1">
+    {{ form }}
+  </table>
+  <button type="submit" class="buttonstyle">Submit</button>
+</form>
+</div>

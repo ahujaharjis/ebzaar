@@ -1,0 +1,8 @@
+<br>
+<h1>Commission Calculation</h1>
+<form action="{% url 'mapping:comm_calc' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    Order File:
+    <input type="file" name="order_file" />
+    <button type="submit" class="buttonstyle">Submit</button>
+</form>

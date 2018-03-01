@@ -1,0 +1,9 @@
+<br>
+Penalty Evaluation(Enter Order List -xml file)
+<br>
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    Order File: <input type="file" id="file" name="file"/>
+    <br>
+    <input type="submit" value="Submit">
+</form>

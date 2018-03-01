@@ -1,0 +1,10 @@
+<br>
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+Start Date : <input type="date" name="sdate" required/>
+    <br>
+    End Date : <input type="date" name="edate" required/>
+    <br>
+
+    <input type="submit" value="Sumbit"/>
+</form>
